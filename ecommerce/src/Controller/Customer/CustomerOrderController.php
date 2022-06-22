@@ -6,34 +6,37 @@ use App\Controller\BaseController;
 use App\Entity\CustomerOrder;
 use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CustomerOrderController extends BaseController
 {
     #[Route('/customer/order', name: 'app_customer_order')]
+    /**
+     * Kullanıcının tüm siparişlerini listeler
+     */
     public function index(): JsonResponse
     {
         $user = $this->getUser();
-
         $orders = $this->getRepository(CustomerOrder::class)->getMyOrders($user);
 
         return $this->response($orders);
     }
 
     #[Route('/customer/show/{orderCode}', name: 'app_customer_order_show')]
+    /**
+     * Kullanıcının bir siparişini görüntüler (orderCode ile ve bu kod otomatik uniq olarak üretiliyor)
+     */
     public function show($orderCode): JsonResponse
     {
         $order = $this->getRepository(CustomerOrder::class)->showOrderByOrderCode($this->getUser(),$orderCode);
 
         $message=null;
         $status = 200;
+
         if(!$order)
         {
            $message = "Talep edilen sipariş bulunamadı.";
@@ -43,12 +46,18 @@ class CustomerOrderController extends BaseController
     }
 
     #[Route('/customer/create', name: 'app_customer_order_show')]
+    /**
+     * Yeni sipariş oluşturmak için bu endpoint kullanılır
+     */
     public function create(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->createUpdate($request,$validator,$entityManager);
     }
 
     #[Route('/customer/update/{id}', name: 'app_customer_order_update')]
+    /**
+     * Teslim tarihi henüz oluşmamış siparişler için düzenleme
+     */
     public function update(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager, $id): JsonResponse
     {
         $customerOrder = $this->getRepository(CustomerOrder::class)->find($id);
@@ -59,6 +68,13 @@ class CustomerOrderController extends BaseController
         return $this->createUpdate($request,$validator,$entityManager,$customerOrder);
     }
 
+    /**
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param EntityManagerInterface $entityManager
+     * @param CustomerOrder|null $customerOrder
+     * @return JsonResponse
+     */
     private function createUpdate(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager, ?CustomerOrder $customerOrder): JsonResponse
     {
         if(!$customerOrder)
@@ -97,6 +113,7 @@ class CustomerOrderController extends BaseController
         {
             $errors[] = [$violation->getPropertyPath() => $violation->getMessage()];
         }
+
         if($errors)
         {
             $this->response($errors,"Hata",500);

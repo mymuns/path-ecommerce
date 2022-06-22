@@ -19,6 +19,11 @@ use Doctrine\ORM\EntityRepository;
 class CustomerOrderRepository extends EntityRepository
 {
 
+    /**
+     * @param CustomerOrder $entity
+     * @param bool $flush
+     * @return CustomerOrder
+     */
     public function add(CustomerOrder $entity, bool $flush = false): CustomerOrder
     {
         $this->getEntityManager()->persist($entity);
@@ -29,6 +34,10 @@ class CustomerOrderRepository extends EntityRepository
         return $entity;
     }
 
+    /**
+     * @param CustomerOrder $entity
+     * @param bool $flush
+     */
     public function remove(CustomerOrder $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -38,6 +47,10 @@ class CustomerOrderRepository extends EntityRepository
         }
     }
 
+    /**
+     * @param User $user
+     * @return int|mixed|string
+     */
     public function getMyOrders(User $user)
     {
         return $this->createQueryBuilder('o')
@@ -47,6 +60,12 @@ class CustomerOrderRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param User $user
+     * @param string $orderCode
+     * @return int|mixed|string|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function showOrderByOrderCode(User $user, string $orderCode)
     {
         return $this->createQueryBuilder('o')
@@ -56,29 +75,4 @@ class CustomerOrderRepository extends EntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
-//    /**
-//     * @return CustomerOrder[] Returns an array of CustomerOrder objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?CustomerOrder
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
