@@ -17,10 +17,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Product::class);
-    }
 
     public function add(Product $entity, bool $flush = false): void
     {
