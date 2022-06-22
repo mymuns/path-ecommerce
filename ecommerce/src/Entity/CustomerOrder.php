@@ -4,8 +4,8 @@ namespace App\Entity;
 
 use App\Repository\CustomerOrderRepository;
 use Doctrine\ORM\Mapping as ORM;
-
 #[ORM\Entity(repositoryClass: CustomerOrderRepository::class)]
+
 class CustomerOrder
 {
     #[ORM\Id]
@@ -22,14 +22,14 @@ class CustomerOrder
     #[ORM\Column(type: 'text')]
     private $address;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime',nullable: true)]
     private $shippingDate;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(nullable: false)]
     private $product;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'customerOrders')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 
@@ -108,5 +108,10 @@ class CustomerOrder
         $this->user = $user;
 
         return $this;
+    }
+
+    public function setCreatedOrderCode()
+    {
+        $this->orderCode = strtoupper(substr(uniqid(sha1(time())),0,8));
     }
 }

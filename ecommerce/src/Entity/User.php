@@ -4,9 +4,9 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -24,10 +24,8 @@ class User implements UserInterface
     private $email;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Ignore]
     private $password;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CustomerOrder::class)]
-    private $customerOrders;
 
     public function __construct()
     {
@@ -89,6 +87,7 @@ class User implements UserInterface
 
     /**
      * @return array|string[]
+     * @Ignore
      */
     public function getRoles()
     {
@@ -104,36 +103,4 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
-
-    /**
-     * @return Collection<int, CustomerOrder>
-     */
-    public function getCustomerOrders(): Collection
-    {
-        return $this->customerOrders;
-    }
-
-    public function addCustomerOrder(CustomerOrder $customerOrder): self
-    {
-        if (!$this->customerOrders->contains($customerOrder)) {
-            $this->customerOrders[] = $customerOrder;
-            $customerOrder->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCustomerOrder(CustomerOrder $customerOrder): self
-    {
-        if ($this->customerOrders->removeElement($customerOrder)) {
-            // set the owning side to null (unless already changed)
-            if ($customerOrder->getUser() === $this) {
-                $customerOrder->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-
 }
