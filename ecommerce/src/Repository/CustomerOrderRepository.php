@@ -19,13 +19,14 @@ use Doctrine\ORM\EntityRepository;
 class CustomerOrderRepository extends EntityRepository
 {
 
-    public function add(CustomerOrder $entity, bool $flush = false): void
+    public function add(CustomerOrder $entity, bool $flush = false): CustomerOrder
     {
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+        return $entity;
     }
 
     public function remove(CustomerOrder $entity, bool $flush = false): void
