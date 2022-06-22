@@ -1,8 +1,0 @@
-App\Entity\User:
-  attributes:
-    id:
-      groups: [ 'public' ]
-    email:
-      groups: [ 'public' ]
-    roles:
-      groups: [ 'public' ]
