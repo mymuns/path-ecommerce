@@ -94,6 +94,10 @@ class User implements UserInterface
         return array('ROLE_USER');
     }
 
+    /**
+     * @return string|void|null
+     * @Ignore
+     */
     public function getSalt()
     {
         // TODO: Implement getSalt() method.
