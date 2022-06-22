@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\CustomerOrder;
+
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @extends ServiceEntityRepository<CustomerOrder>
@@ -14,12 +16,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method CustomerOrder[]    findAll()
  * @method CustomerOrder[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CustomerOrderRepository extends ServiceEntityRepository
+class CustomerOrderRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, CustomerOrder::class);
-    }
 
     public function add(CustomerOrder $entity, bool $flush = false): void
     {
@@ -37,6 +35,25 @@ class CustomerOrderRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getMyOrders(User $user)
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function showOrderWithOrderCode(User $user, string $orderCode)
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.user = :user and o.orderCode = : orderCode')
+            ->setParameter('user', $user)
+            ->setParameter('orderCode', $orderCode)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
 //    /**
