@@ -17,9 +17,6 @@ class CustomerOrder
     private $orderCode;
 
     #[ORM\Column(type: 'integer')]
-    private $productId;
-
-    #[ORM\Column(type: 'integer')]
     private $quantity;
 
     #[ORM\Column(type: 'text')]
@@ -27,6 +24,14 @@ class CustomerOrder
 
     #[ORM\Column(type: 'datetime')]
     private $shippingDate;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $product;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'customerOrders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
 
     public function getId(): ?int
     {
@@ -41,18 +46,6 @@ class CustomerOrder
     public function setOrderCode(string $orderCode): self
     {
         $this->orderCode = $orderCode;
-
-        return $this;
-    }
-
-    public function getProductId(): ?int
-    {
-        return $this->productId;
-    }
-
-    public function setProductId(int $productId): self
-    {
-        $this->productId = $productId;
 
         return $this;
     }
@@ -89,6 +82,30 @@ class CustomerOrder
     public function setShippingDate(\DateTimeInterface $shippingDate): self
     {
         $this->shippingDate = $shippingDate;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
