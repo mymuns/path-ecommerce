@@ -46,7 +46,7 @@ class CustomerOrderRepository extends EntityRepository
             ->getResult();
     }
 
-    public function showOrderWithOrderCode(User $user, string $orderCode)
+    public function showOrderByOrderCode(User $user, string $orderCode)
     {
         return $this->createQueryBuilder('o')
             ->where('o.user = :user and o.orderCode = : orderCode')
